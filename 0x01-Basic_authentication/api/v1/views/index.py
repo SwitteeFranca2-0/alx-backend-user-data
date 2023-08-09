@@ -29,10 +29,10 @@ def stats() -> str:
 @app_views.route('/forbidden')
 def forbidden() -> str:
     """Return the 401 error"""
-    abort(403)
+    return abort(403)
 
 
 @app_views.route('/unauthorized')
 def unauthorized() -> str:
     """Return the 401 error"""
-    abort(401)
+    return abort(401)
