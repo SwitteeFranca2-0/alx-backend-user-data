@@ -3,7 +3,7 @@
 from typing import List
 import re
 from os import getenv
-from mysql.connector import (connection)
+import mysql.connector
 import logging
 
 
@@ -52,14 +52,14 @@ def get_logger() -> logging.Logger:
     return logger
 
 
-def get_db() -> connection.MySQLConnection:
+def get_db() -> mysql.connector.connection.MySQLConnection:
     """connect to a database"""
     user = getenv('PERSONAL_DATA_DB_USERNAME') or "root"
     pwd = getenv('PERSONAL_DATA_DB_PASSWORD') or ""
     host = getenv('PERSONAL_DATA_DB_HOST') or "localhost"
     db = getenv('PERSONAL_DATA_DB_NAME')
 
-    conn = connection.MySQLConnection(user=user, password=pwd,
+    conn = mysql.connector.connection.MySQLConnection(user=user, password=pwd,
                                       host=host, database=db)
     return conn
 
