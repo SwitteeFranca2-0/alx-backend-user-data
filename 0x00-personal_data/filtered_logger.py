@@ -60,7 +60,7 @@ def get_db() -> mysql.connector.connection.MySQLConnection:
     db = getenv('PERSONAL_DATA_DB_NAME')
 
     conn = mysql.connector.connection.MySQLConnection(user=user, password=pwd,
-                                      host=host, database=db)
+                                                      host=host, database=db)
     return conn
 
 
