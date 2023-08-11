@@ -11,7 +11,7 @@ PIL_FIELDS = ('name', 'email', 'phone', 'ssn', 'password', 'ip')
 
 
 def filter_datum(fields: List[str], redaction: str,
-                 messages: str, separator: str):
+                 messages: str, separator: str) -> str:
     """fileter data"""
     for field in fields:
         pattern = rf"(?<={field}=)(.*?)(?={separator})"
