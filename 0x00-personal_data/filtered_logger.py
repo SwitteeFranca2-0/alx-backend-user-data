@@ -11,12 +11,12 @@ PII_FIELDS = ('name', 'email', 'phone', 'ssn', 'password')
 
 
 def filter_datum(fields: List[str], redaction: str,
-                 messages: str, separator: str) -> str:
+                 message: str, separator: str) -> str:
     """fileter data"""
     for field in fields:
         pattern = rf"(?<={field}=)(.*?)(?={separator})"
-        messages = re.sub(pattern, redaction, messages)
-    return messages
+        message = re.sub(pattern, redaction, message)
+    return message
 
 
 class RedactingFormatter(logging.Formatter):
