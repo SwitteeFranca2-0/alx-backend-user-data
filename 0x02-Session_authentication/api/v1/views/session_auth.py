@@ -2,7 +2,6 @@
 """Simple API session authentication class"""
 
 from models.user import User
-from uuid import uuid4
 from api.v1.views import app2_views
 from flask import request, jsonify, abort
 from os import getenv as env
