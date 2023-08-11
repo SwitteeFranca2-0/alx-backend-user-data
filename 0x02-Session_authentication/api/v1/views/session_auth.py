@@ -2,12 +2,12 @@
 """Simple API session authentication class"""
 
 from models.user import User
-from api.v1.views import app2_views
+from api.v1.views import app_views
 from flask import request, jsonify, abort
 from os import getenv as env
 
 
-@app2_views.route('/auth_session/login',
+@app_views.route('/auth_session/login',
                   methods=['POST'], strict_slashes=False)
 def login():
     """get seesion login information"""
@@ -30,7 +30,7 @@ def login():
     return jsonify({"error": "wrong password"}), 401
 
 
-@app2_views.route('/auth_session/logout',
+@app_views.route('/auth_session/logout',
                   methods=['DELETE'], strict_slashes=False)
 def logout():
     """logout from session created initially"""
