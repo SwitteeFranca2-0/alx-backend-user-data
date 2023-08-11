@@ -4,7 +4,7 @@
 from models.user import User
 from uuid import uuid4
 from api.v1.views import app2_views
-from flask import request, jsonify, session
+from flask import request, jsonify, abort
 from os import getenv as env
 
 
@@ -29,7 +29,11 @@ def login():
             return res
     return jsonify({ "error": "wrong password" }), 401
     
-
-def destroy_session(self, request=None):
-    """destroys session created"""
-    
+@app2_views.route('/auth_session/logout', methods=['DELETE'], strict_slashes=False)
+def logout():
+    """logout from session"""
+    from api.v1.app import auth
+    bool_res = auth.destroy_session(request)
+    if bool_res is False:
+        return False, abort(404)
+    return jsonify({}), 200
