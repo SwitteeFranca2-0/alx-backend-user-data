@@ -3,18 +3,21 @@
 from typing import List
 import re
 from os import getenv
-import mysql.connector
+from mysql.connector import (connection)
 import logging
 
 
-PIL_FIELDS = ('name', 'email',' phone', 'ssn','password', 'ip')
+PIL_FIELDS = ('name', 'email', 'phone', 'ssn', 'password', 'ip')
 
-def filter_datum(fields: List[str], redaction: str, messages: str, separator: str):
+
+def filter_datum(fields: List[str], redaction: str,
+                 messages: str, separator: str):
     """fileter data"""
     for field in fields:
         pattern = rf"(?<={field}=)(.*?)(?={separator})"
         messages = re.sub(pattern, redaction, messages)
     return messages
+
 
 class RedactingFormatter(logging.Formatter):
     """ Redacting Formatter class
@@ -31,10 +34,11 @@ class RedactingFormatter(logging.Formatter):
     def format(self, record: logging.LogRecord) -> str:
         """Format the string with redaction"""
         log_message = super(RedactingFormatter, self).format(record)
-        return filter_datum(self.field, RedactingFormatter.REDACTION, log_message, RedactingFormatter.SEPARATOR)
-    
+        return filter_datum(self.field, RedactingFormatter.REDACTION,
+                            log_message, RedactingFormatter.SEPARATOR)
 
-def get_logger()-> logging.Logger:
+
+def get_logger() -> logging.Logger:
     """returns a logging.logger object and takes no argumnebt"""
     logger = logging.getLogger("user_data")
     logger.setLevel(logging.INFO)
@@ -47,16 +51,37 @@ def get_logger()-> logging.Logger:
     logger.addHandler(handler)
     return logger
 
-def get_db() -> mysql.connector.connection.MySQLConnection:
+
+def get_db() -> connection.MySQLConnection:
     """connect to a database"""
-    user = getenv('PERSONAL_DATA_DB_USERNAME') or 'root'
-    pwd = getenv('PERSONAL_DATA_DB_PASSWORD')or ""
+    user = getenv('PERSONAL_DATA_DB_USERNAME') or "root"
+    pwd = getenv('PERSONAL_DATA_DB_PASSWORD') or " "
     host = getenv('PERSONAL_DATA_DB_HOST') or "localhost"
     db = getenv('PERSONAL_DATA_DB_NAME')
 
-    conn = mysql.connector.connect(user=user, password=pwd,
-                                   host=host, database=db)
+    conn = connection.MySQLConnection(user=user, password=pwd,
+                                      host=host, database=db)
     return conn
 
 
+def main():
+    conn = get_db()
+    cursor = conn.cursor()
+    query = ("SELECT * FROM users;")
+    cursor.execute(query)
+    for (nm, em, ph, ss, pwd, ip, lt_lg, ur_agt) in cursor:
+        s = RedactingFormatter.SEPARATOR
+        message = f"name={nm}{s}email={em}{s}phone={ph}"
+        message += f"{s}ssn={ss}{s}password={pwd}{s}"
+        log = RedactingFormatter(fields=("email", "ssn",
+                                         "password", "name", "phone"))
+        log_record = logging.LogRecord("user_data", logging.INFO,
+                                       None, None, message, None, None)
+        messages = log.format(log_record)
+        messages += f"ip={ip}{s}last_login={lt_lg}{s}user_agent={ur_agt}{s}"
+        print(messages)
+    cursor.close()
+    conn.close()
 
+
+main()
