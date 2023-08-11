@@ -3,9 +3,8 @@
 
 from api.v1.auth.session_auth import SessionAuth
 import os
-from models.user import User
-from uuid import uuid4
 from datetime import datetime, timedelta
+
 
 class SessionExpAuth(SessionAuth):
     """Session expiry authentication"""
@@ -13,7 +12,7 @@ class SessionExpAuth(SessionAuth):
 
     def __init__(self) -> None:
         super().__init__()
-        try: 
+        try:
             self.session_duration = int(os.getenv('SESSION_DURATION'))
         except Exception:
             self.session_duration = 0
@@ -24,10 +23,11 @@ class SessionExpAuth(SessionAuth):
             session_id = super().create_session(user_id)
         except Exception:
             return None
-        session_dictionary = {'user_id': user_id, 'created_at': datetime.utcnow()}
+        session_dictionary = {'user_id': user_id,
+                              'created_at': datetime.utcnow()}
         SessionExpAuth.user_id_by_session_id[session_id] = session_dictionary
         return session_id
-    
+
     def user_id_for_session_id(self, session_id=None):
         """"Overloading the inherited function"""
         if session_id is None:
@@ -42,7 +42,6 @@ class SessionExpAuth(SessionAuth):
         time_now = datetime.now()
         time_duration = timedelta(seconds=self.session_duration)
         time_of_exp = s_dict['created_at'] + time_duration
-        if time_now > time_of_exp:
+        if time_of_exp < time_now:
             return None
         return s_dict.get('user_id')
-    
