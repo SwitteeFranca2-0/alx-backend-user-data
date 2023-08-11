@@ -33,7 +33,7 @@ def login():
 @app2_views.route('/auth_session/logout',
                   methods=['DELETE'], strict_slashes=False)
 def logout():
-    """logout from session"""
+    """logout from session created initially"""
     from api.v1.app import auth
     bool_res = auth.destroy_session(request)
     if bool_res is False:
