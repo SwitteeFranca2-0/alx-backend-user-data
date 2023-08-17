@@ -22,17 +22,10 @@ class Auth:
 
     def register_user(self, email: str, password: str) -> User:
         """Register user in authentication database"""
-        session = self._db._session
-        user = session.query(User).filter_by(email=email).first()
+        user = self._db.find_user_by(email=email)
         if user is not None:
             raise ValueError('User {} already exists'.format(email))
-        user = User(email=email, hashed_password=_hash_password(password))
-        try:
-            session.add(user)
-            session.commit()
-        except Exception:
-            session.rollback()
-        return user
+        return self._db.add_user(email, _hash_password(password))   
 
     def valid_login(self, email: str, password: str) -> bool:
         """Check if login is valid"""
