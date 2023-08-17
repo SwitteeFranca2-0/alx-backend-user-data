@@ -42,7 +42,7 @@ class DB:
             user = None
         return user
 
-    def find_user_by(self, **kwargs) -> User:
+    def find_user_by(self, **kwargs: dict) -> User:
         """Finc user by from the database by arbtrary keywords"""
         keys = []
         vals = []
@@ -61,11 +61,10 @@ class DB:
     def update_user(self, user_id: str, **kwargs) -> None:
         """Update user t othe database"""
         user = self.find_user_by(id=int(user_id))
-        updates = {}
         for k, v in kwargs.items():
             if hasattr(User, k):
-                updates[getattr(User, k)] = v
-            else:
-                raise ValueError
-        self._session.query(User).filter_by(id == user_id).update(updates)
+                if type(v) != str and v is not None:
+                    raise ValueError
+            setattr(user, k, v)
         self._session.commit()
+        return None
