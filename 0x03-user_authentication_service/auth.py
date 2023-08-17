@@ -13,9 +13,10 @@ def _hash_password(password: str) -> bytes:
     b_pwd = bytes(password, 'utf-8')
     return bcrypt.hashpw(b_pwd, bcrypt.gensalt())
 
+
 def _generate_uuid() -> str:
-        """generate uuid from the module"""
-        return str(uuid4())
+    """generate uuid from the module"""
+    return str(uuid4())
 
 
 class Auth:
