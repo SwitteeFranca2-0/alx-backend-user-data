@@ -25,7 +25,7 @@ class Auth:
         session = self._db._session
         user = session.query(User).filter_by(email=email).first()
         if user is not None:
-            raise ValueError('User {} alreadyexists'.format(email))
+            raise ValueError('User {} already exists'.format(email))
         user = User(email=email, hashed_password=_hash_password(password))
         try:
             session.add(user)
