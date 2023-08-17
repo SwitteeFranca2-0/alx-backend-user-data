@@ -7,6 +7,12 @@ from user import User
 import uuid
 
 
+def _hash_password(pwd: str) -> bytes:
+        """Converting a string to hashed password"""
+        b_pwd = bytes(pwd, 'utf-8')
+        return bcrypt.hashpw(b_pwd, bcrypt.gensalt())
+
+
 class Auth:
     """Auth class to interact with the authentication database.
     """
@@ -14,18 +20,13 @@ class Auth:
     def __init__(self):
         self._db = DB()
 
-    def _hash_password(pwd: str) -> bytes:
-        """Converting a string to hashed password"""
-        b_pwd = bytes(pwd, 'utf-8')
-        return bcrypt.hashpw(b_pwd, bcrypt.gensalt())
-
     def register_user(self, email: str, password: str) -> User:
         """Register user in authentication database"""
         session = self._db._session
         user = session.query(User).filter_by(email=email).first()
         if user is not None:
             raise ValueError('User {} alreadyexists'.format(email))
-        user = User(email=email, hashed_password=self._hash_password(password))
+        user = User(email=email, hashed_password=_hash_password(password))
         try:
             session.add(user)
             session.commit()
