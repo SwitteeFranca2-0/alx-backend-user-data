@@ -41,14 +41,14 @@ def login():
 
 
 @app.route('/sessions', methods=['DELETE'], strict_slashes=False)
-def logout():
+def logout() -> str:
     """log out of session"""
     session_id = request.cookies.get('session_id')
     user = AUTH.get_user_from_session_id(session_id)
     if user is None:
         abort(403)
     AUTH.destroy_session(user.id)
-    redirect('/')
+    return redirect(url_for('int'))
 
 
 @app.route('/profile', methods=['GET'], strict_slashes=False)
