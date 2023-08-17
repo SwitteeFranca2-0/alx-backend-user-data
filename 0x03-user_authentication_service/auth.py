@@ -7,10 +7,10 @@ from user import User
 import uuid
 
 
-def _hash_password(pwd: str) -> bytes:
-        """Converting a string to hashed password"""
-        b_pwd = bytes(pwd, 'utf-8')
-        return bcrypt.hashpw(b_pwd, bcrypt.gensalt())
+def _hash_password(password: str) -> bytes:
+    """Converting a string to hashed password"""
+    b_pwd = bytes(password, 'utf-8')
+    return bcrypt.hashpw(b_pwd, bcrypt.gensalt())
 
 
 class Auth:
